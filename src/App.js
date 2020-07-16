@@ -1,23 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import useBookSearch from './hooks/useBookSearch';
 import './App.css';
 
 function App() {
+  const [query, setQuery] = useState('');
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const { loading, books } = useBookSearch(query, pageNumber);
+
+  const handleOnChange = (e) => {
+    setQuery(e.target.value);
+    setPageNumber(1);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <input onChange={handleOnChange} value={query} />
+        {loading ?
+          <h1>Loading...</h1>
+          :
+          books.map(book => (<p key={book}>{book}</p>))
+        }
       </header>
     </div>
   );
