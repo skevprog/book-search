@@ -2,26 +2,24 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function useBookSearch(query, pageNumber) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [books, setBooks] = useState([]);
   const [hasMore, setHasMore] = useState(false);
 
-  useEffect(() => {
-    setBooks([]);
-  }, [query]);
-
   let cancel;
   useEffect(() => {
+    if (!query) {
+      return setBooks([]);
+    };
     setLoading(true);
     setError(false);
     axios({
       method: 'GET',
-      url: 'http://openlibrary.org/search.json',
+      url: 'http://openlibrary.org/search.json?limit=15',
       params: { q: query, page: pageNumber },
       cancelToken: new axios.CancelToken(c => cancel = c),
     }).then((res) => {
-      console.log(res.data.docs)
       setBooks(prevBooks => {
         return [...new Set([...prevBooks, ...res.data.docs.map(book => book.title)])];
       });
