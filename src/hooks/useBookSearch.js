@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const API_URL = 'https://www.googleapis.com/books/v1/volumes?';
+
 function useBookSearch(query, pageNumber) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -10,25 +12,30 @@ function useBookSearch(query, pageNumber) {
   let cancel;
   useEffect(() => {
     if (!query) {
+      setLoading(false);
       return setBooks([]);
-    };
+    }
     setLoading(true);
-    setError(false);
     axios({
       method: 'GET',
-      url: 'http://openlibrary.org/search.json?limit=15',
-      params: { q: query, page: pageNumber },
-      cancelToken: new axios.CancelToken(c => cancel = c),
+      url: API_URL,
+      params: { q: query, maxResults: 25, startIndex: pageNumber },
+      cancelToken: new axios.CancelToken((c) => {
+        cancel = c;
+      }),
     }).then((res) => {
-      setBooks(prevBooks => {
-        return [...new Set([...prevBooks, ...res.data.docs.map(book => book.title)])];
-      });
-      setHasMore(res.data.docs.length > 0);
+      const { items } = res.data;
+      setBooks((prevBooks) => [...new Set([...prevBooks, ...items.map((book) => ({
+        id: book.etag,
+        title: book.volumeInfo.title,
+        cover: book.volumeInfo.imageLinks?.thumbnail,
+      }))])]);
+      setHasMore(items.length > 0);
       setLoading(false);
-    }).catch(e => {
+    }).catch((e) => {
       if (axios.isCancel(e)) return;
-      setError(e.message);
-    })
+      setError(true);
+    });
     return () => cancel();
   }, [query, pageNumber]);
 
