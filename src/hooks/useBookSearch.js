@@ -24,11 +24,15 @@ function useBookSearch(query, pageNumber) {
         cancel = c;
       }),
     }).then((res) => {
-      const { items } = res.data;
-      setBooks((prevBooks) => [...new Set([...prevBooks, ...items.map((book) => ({
-        id: book.etag,
-        title: book.volumeInfo.title,
-        cover: book.volumeInfo.imageLinks?.thumbnail,
+      const { items, totalItems } = res.data;
+      if (totalItems <= 1) {
+        setLoading(false);
+        return setBooks([]);
+      }
+      setBooks((prevBooks) => [...new Set([...prevBooks, ...items.map(({ etag, volumeInfo: { title, imageLinks } }) => ({
+        id: etag,
+        title,
+        cover: imageLinks?.thumbnail,
       }))])]);
       setHasMore(items.length > 0);
       setLoading(false);

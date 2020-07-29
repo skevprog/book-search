@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import useBookSearch from './hooks/useBookSearch';
+import { Book, Message } from './components';
 import './App.css';
 
 function App() {
@@ -31,43 +32,22 @@ function App() {
     setPageNumber(1);
   };
 
-  const renderBooks = (booksArray = []) => {
-    if (!booksArray.length) return (<div>No books to show</div>);
-    return booksArray.map((book, index) => {
-      if (booksArray.length === index + 1) {
-        return (
-          <div>
-            <h2
-              style={{ border: 'solid 2px red', padding: '1em' }}
-              ref={lastBookElementRef}
-              key={book.id}
-            >
-              {book.title}
-            </h2>
-            <img src={book.cover} alt={book.title} />
-          </div>
-        );
-      }
+  const renderBooks = (booksArray = []) => booksArray.map((book, index) => {
+    if (booksArray.length === index + 1) {
       return (
-        <div>
-          <h2
-            key={book.id}
-          >
-            {book.title}
-          </h2>
-          <img src={book.cover} alt={book.title} />
-        </div>
-      );
-    });
-  };
+        <Book ref={lastBookElementRef} book={book} />);
+    }
+    return (<Book book={book} />);
+  });
 
   return (
     <div className="App">
       <header className="App-header">
         <input onChange={handleOnChange} value={query} />
-        {books.length && renderBooks(books)}
-        {loading && <h1>Loading...</h1>}
-        {error && <h1>Something went wrong</h1>}
+        {books && books.length > 0 && renderBooks(books)}
+        {(query && books.length === 0 && !loading) && (<Message text="No books found" />)}
+        {loading && <Message text="Loading" />}
+        {error && <Message text="Something went wrong" />}
       </header>
     </div>
   );
