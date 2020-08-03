@@ -1,18 +1,18 @@
 import React, { forwardRef } from 'react';
+import Image from '../Image';
 
 function Book({ book }, ref) {
-  const { id, title, cover } = book;
+  const { title, cover } = book;
   return (
     <div>
       <p
         ref={ref}
-        key={id}
       >
         {title}
       </p>
-      <img src={cover} alt={title} />
+      <Image src={cover} alt={title} />
     </div>
   );
 }
 
-export default forwardRef(Book);
+export default React.memo(forwardRef(Book));

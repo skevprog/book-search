@@ -3,6 +3,15 @@ import axios from 'axios';
 
 const API_URL = 'https://www.googleapis.com/books/v1/volumes?';
 
+const extractBookData = (bookData) => {
+  const { id, volumeInfo: { title, imageLinks } } = bookData;
+  return {
+    id,
+    title,
+    cover: imageLinks?.thumbnail,
+  };
+};
+
 function useBookSearch(query, pageNumber) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -19,7 +28,9 @@ function useBookSearch(query, pageNumber) {
     axios({
       method: 'GET',
       url: API_URL,
-      params: { q: query, maxResults: 25, startIndex: pageNumber },
+      params: {
+        q: query, maxResults: 20, startIndex: pageNumber,
+      },
       cancelToken: new axios.CancelToken((c) => {
         cancel = c;
       }),
@@ -29,11 +40,7 @@ function useBookSearch(query, pageNumber) {
         setLoading(false);
         return setBooks([]);
       }
-      setBooks((prevBooks) => [...new Set([...prevBooks, ...items.map(({ etag, volumeInfo: { title, imageLinks } }) => ({
-        id: etag,
-        title,
-        cover: imageLinks?.thumbnail,
-      }))])]);
+      setBooks((prevBooks) => [...prevBooks, ...items.map(extractBookData)]);
       setHasMore(items.length > 0);
       setLoading(false);
     }).catch((e) => {

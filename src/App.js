@@ -5,7 +5,7 @@ import './App.css';
 
 function App() {
   const [query, setQuery] = useState('');
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(0);
 
   const {
     loading, books, hasMore, error,
@@ -19,7 +19,7 @@ function App() {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          setPageNumber((prevPageNumber) => prevPageNumber + 20);
         }
       });
       if (node) observer.current.observe(node);
@@ -29,26 +29,26 @@ function App() {
 
   const handleOnChange = (e) => {
     setQuery(e.target.value);
-    setPageNumber(1);
+    setPageNumber(0);
   };
 
-  const renderBooks = (booksArray = []) => booksArray.map((book, index) => {
+  const renderBooks = (booksArray) => booksArray.map((book, index) => {
     if (booksArray.length === index + 1) {
       return (
-        <Book ref={lastBookElementRef} book={book} />);
+        <Book book={book} ref={lastBookElementRef} key={book.id} />);
     }
-    return (<Book book={book} />);
+    return (<Book book={book} key={book.id} />);
   });
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
+      <nav className="nav">
         <input onChange={handleOnChange} value={query} />
-        {books && books.length > 0 && renderBooks(books)}
-        {(query && books.length === 0 && !loading) && (<Message text="No books found" />)}
-        {loading && <Message text="Loading" />}
-        {error && <Message text="Something went wrong" />}
-      </header>
+      </nav>
+      {books && (<div className="books-container">{renderBooks(books)}</div>)}
+      {(query && books.length === 0 && !loading) && (<Message text="No books found" />)}
+      {loading && <Message text="Loading" />}
+      {error && <Message text="Something went wrong" />}
     </div>
   );
 }
