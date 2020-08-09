@@ -4,7 +4,7 @@ const fallBackImage = require('../../utils/img/image-not-found.jpg');
 
 function Image({ src, alt, ...rest }) {
   return (
-    <img src={src || fallBackImage} style={{ width: '130px', height: '200px' }} alt={alt} {...rest} />
+    <img className="img" src={src || fallBackImage} alt={alt} {...rest} />
   );
 }
 
