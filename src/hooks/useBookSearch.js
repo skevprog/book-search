@@ -35,16 +35,17 @@ function useBookSearch(query, pageNumber) {
         cancel = c;
       }),
     }).then((res) => {
-      const { items, totalItems } = res.data;
-      if (totalItems <= 1) {
+      const { items } = res.data;
+      if (!items) {
         setLoading(false);
-        return setBooks([]);
+        return setHasMore(false);
       }
       setBooks((prevBooks) => [...prevBooks, ...items.map(extractBookData)]);
       setHasMore(items.length > 0);
-      setLoading(false);
+      return setLoading(false);
     }).catch((e) => {
       if (axios.isCancel(e)) return;
+      console.log(e);
       setError(true);
     });
     return () => cancel();
