@@ -4,12 +4,12 @@ import Image from '../Image';
 function Book({ book }, ref) {
   const { title, cover } = book;
   return (
-    <div>
-      <p
+    <div className="book">
+      <h4
         ref={ref}
       >
         {title}
-      </p>
+      </h4>
       <Image src={cover} alt={title} />
     </div>
   );
