@@ -34,7 +34,14 @@ h4 {
   background-color: cadetblue;
   padding: 3rem;
   position: fixed;
+  right: 0;
+  left: 0;
+  display: flex;
+}
+
+.nav input {
   width: 100%;
+  padding: 0.7em;
 }
 
 .books-container {
@@ -70,5 +77,10 @@ h4 {
   .img {
     width: 150px;
     height: 200px;
+  }
+
+  .nav input {
+    width: 60%;
+    margin: 0 auto;
   }
 }
