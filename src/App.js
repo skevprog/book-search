@@ -43,7 +43,7 @@ function App() {
   return (
     <div>
       <nav className="nav">
-        <input onChange={handleOnChange} value={query} />
+        <input onChange={handleOnChange} value={query} placeholder="Search for books by keyword / title" />
       </nav>
       {books && (<div className="books-container">{renderBooks(books)}</div>)}
       {(query && books.length === 0 && !loading) && (<Message text="No books found" />)}
